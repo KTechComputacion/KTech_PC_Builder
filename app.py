@@ -237,23 +237,24 @@ def place_order_route():
     build = session.get("build", {})
     if not build:
         return redirect(url_for("index"))
+
     codigos_cantidades = []
-    for v in build.values():
-        if isinstance(v, dict):
-            codigo = v.get("codigo")
-            if codigo:
-                codigos_cantidades.append((str(codigo), 1))
-        elif isinstance(v, list):
-            for it in v:
-                if isinstance(it, dict):
-                    codigo = it.get("codigo")
-                    if codigo:
-                        codigos_cantidades.append((str(codigo), 1))
+    for item in build.values():
+        codigo = str(item.get("codigo", "")).strip()
+        # Solo enviar si el código es completamente numérico
+        if codigo.isdigit():
+            codigos_cantidades.append((codigo, 1))
+
+    if not codigos_cantidades:
+        flash("No hay productos de Tecnoprices para ordenar.", "warning")
+        return redirect(url_for("final"))
+
     try:
         place_order(codigos_cantidades, headless=False)
         flash("Pedido enviado a Technoprices correctamente.", "success")
     except Exception as e:
         flash(f"Error al realizar el pedido: {e}", "error")
+
     return redirect(url_for("final"))
 
 @app.template_filter("money")

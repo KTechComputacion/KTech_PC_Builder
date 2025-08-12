@@ -5,69 +5,6 @@
 <div class="form" style="max-width:720px;">
   <form method="post" action="{{ url_for('final') }}">
     <div class="field">
-      <label for="ganancia">GANANCIA (ARS)</label>
-      <input id="ganancia" name="ganancia" type="number" step="1" min="0" value="{{ profit }}" placeholder="Ej: 100000">
-    </div>
-    <div class="form-actions">
-      <a class="btn btn-primary" href="{{ url_for('place_order_route') }}">Realizar pedido</a>
-      <button class="btn btn-primary" type="submit">Aplicar ganancia</button>
-      <a class="btn btn-secondary" href="{{ url_for('select_category', category='MOTHER') }}">← Atrás</a>
-      <a class="btn btn-secondary" href="{{ url_for('reset') }}">Inicio</a>
-    </div>
-  </form>
-</div>
-
-<h2>Resumen</h2>
-<table class="summary-table">
-  <thead>
-    <tr>
-      <th>Categoría</th>
-      <th>Producto</th>
-      <th class="right">Precio</th>
-    </tr>
-  </thead>
-<tbody>
-  {% for cat in categories %}
-    {% set val = build.get(cat) %}
-    <tr>
-      <td>{{ cat }}</td>
-      <td>
-        {% if val %}
-          {% if val is mapping %}
-            {{ val['nombre'] }}
-          {% elif val is sequence and (val is not string) %}
-            {% if val|length == 1 %}
-              {{ val[0]['nombre'] }}
-            {% else %}
-              {{ val|length }} ítems
-            {% endif %}
-          {% else %}
-            <em>Sin seleccionar</em>
-          {% endif %}
-        {% else %}
-          <em>Sin seleccionar</em>
-        {% endif %}
-      </td>
-      <td class="right">
-        {% if val %}
-          {% if val is mapping %}
-            {{ val['precio']|money }}
-          {% elif val is sequence and (val is not string) %}
-            {% set precios = val | map(attribute='precio') | list %}
-            {{ (precios | sum) | money }}
-          {% else %}
-            -
-          {% endif %}
-        {% else %}
-          -
-        {% endif %}
-      </td>
-    </tr>
-  {% endfor %}
-
-  <div class="form" style="max-width:720px;">
-  <form method="post" action="{{ url_for('final') }}">
-    <div class="field">
       <label for="venta">PRECIO DE VENTA (opcional)</label>
       <input id="venta" name="venta" type="number" step="1" min="0"
              value="{{ '' if venta is none else venta }}"
@@ -94,7 +31,59 @@
   </form>
 </div>
 
-
+<h2>Resumen</h2>
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>Categoría</th>
+      <th>Producto</th>
+      <th class="right">Precio</th>
+    </tr>
+  </thead>
+<tbody>
+  {% for cat in categories %}
+    {% set val = build.get(cat) %}
+    <tr>
+      <td>{{ cat }}</td>
+      <td>
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['nombre'] }}
+            {% if val['codigo'] is defined and not val['codigo'].isdigit() %}
+              <span style="color: red; font-weight: bold;">🚫 Manual, no se ordena</span>
+            {% endif %}
+          {% elif val is sequence and (val is not string) %}
+            {% if val|length == 1 %}
+              {{ val[0]['nombre'] }}
+              {% if val[0]['codigo'] is defined and not val[0]['codigo'].isdigit() %}
+                <span style="color: red; font-weight: bold;">🚫 Manual, no se ordena</span>
+              {% endif %}
+            {% else %}
+              {{ val|length }} ítems
+            {% endif %}
+          {% else %}
+            <em>Sin seleccionar</em>
+          {% endif %}
+        {% else %}
+          <em>Sin seleccionar</em>
+        {% endif %}
+      </td>
+      <td class="right">
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['precio']|money }}
+          {% elif val is sequence and (val is not string) %}
+            {% set precios = val | map(attribute='precio') | list %}
+            {{ (precios | sum) | money }}
+          {% else %}
+            -
+          {% endif %}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
 </tbody>
 
   <tfoot>
@@ -180,4 +169,3 @@
   })();
 </script>
 {% endblock %}
-

@@ -265,8 +265,8 @@
     ],
     "GPU": [
         {
-            "nombre": "NVIDIA RTX 3070",
-            "codigo": "3070",
+            "nombre": "RTX 3070",
+            "codigo": "RTX3070",
             "precio": 350000,
             "stock": 1
         }
