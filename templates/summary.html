@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Resumen del presupuesto</h1>
+
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>Categoría</th>
+      <th>Producto</th>
+      <th class="right">Precio</th>
+    </tr>
+  </thead>
+<tbody>
+  {% for cat in categories %}
+    {% set val = build.get(cat) %}
+    <tr>
+      <td>{{ cat }}</td>
+      <td>
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['nombre'] }}
+          {% elif val is sequence and (val is not string) %}
+            {% if val|length == 1 %}
+              {{ val[0]['nombre'] }}
+            {% else %}
+              {{ val|length }} ítems
+            {% endif %}
+          {% else %}
+            <em>Sin seleccionar</em>
+          {% endif %}
+        {% else %}
+          <em>Sin seleccionar</em>
+        {% endif %}
+      </td>
+      <td class="right">
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['precio']|money }}
+          {% elif val is sequence and (val is not string) %}
+            {% set precios = val | map(attribute='precio') | list %}
+            {{ (precios | sum) | money }}
+          {% else %}
+            -
+          {% endif %}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+</tbody>
+
+<tfoot>
+    <tr>
+      <td colspan="2" class="right"><strong>Total</strong></td>
+      <td class="right"><strong class="price">{{ subtotal|money }}</strong></td>
+    </tr>
+  </tfoot>
+</table>
+
+<div class="wizard-nav">
+  <a class="btn btn-secondary" href="{{ url_for('select_category', category='MOTHER') }}">← Atrás</a>
+  <a class="btn btn-secondary" href="{{ url_for('reset') }}">Inicio</a>
+</div>
+{% endblock %}

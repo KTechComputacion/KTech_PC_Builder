@@ -1,0 +1,274 @@
+{
+    "CPU": [
+        {
+            "nombre": "PROCESADOR AMD RYZEN 3 5300G 4GHZ HASTA 4.2GHZ",
+            "codigo": "19075",
+            "precio": 139426,
+            "stock": 13
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 5 5600GT 3.6GHZ HASTA 4.6",
+            "codigo": "18457",
+            "precio": 205757,
+            "stock": 49
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 5700G 3.8HZ A 4.6GHZ 8",
+            "codigo": "17018",
+            "precio": 221446,
+            "stock": 12
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 5 5600X BASE 3.7GHZ MAX 4",
+            "codigo": "16394",
+            "precio": 225428,
+            "stock": 4
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 5700X 3.4GHZ BASE 4.6GH",
+            "codigo": "17290",
+            "precio": 267719,
+            "stock": 3
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 5 8600G 4.3GHZ HASTA 5GHZ",
+            "codigo": "18469",
+            "precio": 281513,
+            "stock": 11
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 5800XT BASE 3.8GHZ MAX",
+            "codigo": "19910",
+            "precio": 317493,
+            "stock": 7
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 5 9600X 6 NUCLEOS 12 HILO",
+            "codigo": "19692",
+            "precio": 357801,
+            "stock": 1
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 8700G 4.2GHZ HASTA 5.1G",
+            "codigo": "18470",
+            "precio": 412845,
+            "stock": 3
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 9 5900X 12 NUCLEOS 24 HIL",
+            "codigo": "16749",
+            "precio": 466121,
+            "stock": 4
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 9700X 8 NUCLEOS 16 HILO",
+            "codigo": "19693",
+            "precio": 522634,
+            "stock": 1
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 9 9900X 12 NUCLEOS 24 HIL",
+            "codigo": "19694",
+            "precio": 645111,
+            "stock": 1
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 7 9800X3D 8 NUCLEOS 16 HI",
+            "codigo": "19487",
+            "precio": 740837,
+            "stock": 2
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 9 9950X 16 NUCLEOS 32 HIL",
+            "codigo": "19460",
+            "precio": 954204,
+            "stock": 1
+        },
+        {
+            "nombre": "PROCESADOR AMD RYZEN 9 9950X3D 16 NUCLEOS 32 H",
+            "codigo": "19691",
+            "precio": 1282781,
+            "stock": 1
+        }
+    ],
+    "MOTHER": [
+        {
+            "nombre": "MOTHER ASROCK B450M-HDV R4.0 PS2 DVI-D VGA HDM",
+            "codigo": "15101",
+            "precio": 93049,
+            "stock": 2
+        },
+        {
+            "nombre": "MOTHER ASUS PRIME A520M-K VGA HDMI 1XPS2 2XUSB",
+            "codigo": "16746",
+            "precio": 87499,
+            "stock": 43
+        },
+        {
+            "nombre": "MOTHER ASUS PRIME B550M-K 1XVGA 1XDVI-D 1XHDMI",
+            "codigo": "19704",
+            "precio": 125200,
+            "stock": 6
+        },
+        {
+            "nombre": "MOTHER GIGABYTE A520M K V2 2XDDR4 VGA HDMI 1XP",
+            "codigo": "18986",
+            "precio": 83484,
+            "stock": 14
+        },
+        {
+            "nombre": "MOTHER GIGABYTE B550M K HDMI DISPLAYPORT 4XDDR",
+            "codigo": "18233",
+            "precio": 122019,
+            "stock": 5
+        },
+        {
+            "nombre": "MOTHER MSI B550M-A PRO 2XDDR4 2XPS2 HDMI DVI-D",
+            "codigo": "19026",
+            "precio": 108965,
+            "stock": 6
+        }
+    ],
+    "RAM": [
+        {
+            "nombre": "MEMORIA DDR4 16GB 3200MHZ 1.2V CL22 DESKTOP GOLDEN BASIC",
+            "codigo": "18914",
+            "precio": 41299,
+            "stock": 58
+        }
+    ],
+    "SSD": [
+        {
+            "nombre": "DISCO SOLIDO SSD 256GB M2 MICRON 2450 22X80MM",
+            "codigo": "20257",
+            "precio": 22383,
+            "stock": 8
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 240GB 2.5 SATA III NETAC N535",
+            "codigo": "20270",
+            "precio": 25120,
+            "stock": 115
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 240GB 2.5 SATA III WESTERN DI",
+            "codigo": "13109",
+            "precio": 35980,
+            "stock": 89
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 240GB 2.5 SATA III KINGSTON A",
+            "codigo": "13494",
+            "precio": 40290,
+            "stock": 176
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 256GB MINI MSATA KINGSPEC MT-",
+            "codigo": "14487",
+            "precio": 42866,
+            "stock": 1
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 480GB 2.5 SATA III WESTERN DI",
+            "codigo": "15952",
+            "precio": 49781,
+            "stock": 15
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 480GB 2.5 SATA III KINGSTON A",
+            "codigo": "13529",
+            "precio": 58958,
+            "stock": 82
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 500GB M2 KINGSTON SNV3S 22X80",
+            "codigo": "19311",
+            "precio": 59931,
+            "stock": 37
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 1TB M2 CRUCIAL E100 22X80MM I",
+            "codigo": "19901",
+            "precio": 91583,
+            "stock": 5
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 960GB 2.5 SATA III KINGSTON A",
+            "codigo": "14555",
+            "precio": 93235,
+            "stock": 55
+        },
+        {
+            "nombre": "DISCO SOLIDO SSD 1TB M2 KINGSTON SNV3S 22X80MM",
+            "codigo": "19312",
+            "precio": 96120,
+            "stock": 19
+        }
+    ],
+    "FUENTE": [
+        {
+            "nombre": "FUENTE GIGABYTE 650W GP-P650SS 80 PLUS SILVER",
+            "codigo": "20242",
+            "precio": 74382,
+            "stock": 3
+        },
+        {
+            "nombre": "FUENTE SOLARMAX 650W 80 PLUS BRONZE 1X24PINES",
+            "codigo": "19186",
+            "precio": 64920,
+            "stock": 26
+        }
+    ],
+    "GABINETE": [
+        {
+            "nombre": "GABINETE SOLARMAX CM-B300-SF MICROATX FRENTE R",
+            "codigo": "18951",
+            "precio": 49789,
+            "stock": 45
+        },
+        {
+            "nombre": "GABINETE SOLARMAX CM-8026 ATX MICROATX 6X COOL",
+            "codigo": "19550",
+            "precio": 62180,
+            "stock": 44
+        },
+        {
+            "nombre": "GABINETE SOLARMAX CM-B300-SF MICROATX FRENTE R",
+            "codigo": "19547",
+            "precio": 62279,
+            "stock": 48
+        },
+        {
+            "nombre": "GABINETE SOLARMAX CM-5901-SF ATX MICROATX MINI",
+            "codigo": "18607",
+            "precio": 67802,
+            "stock": 8
+        },
+        {
+            "nombre": "GABINETE THERMALTAKE S100 TG TEMPERED GLASS MI",
+            "codigo": "16370",
+            "precio": 73609,
+            "stock": 2
+        },
+        {
+            "nombre": "GABINETE THERMALTAKE S100 TEMPERED GLASS 2XBAH",
+            "codigo": "16371",
+            "precio": 73764,
+            "stock": 2
+        },
+        {
+            "nombre": "GABINETE SOLARMAX B930 ATX MICROATX FRENTE RGB",
+            "codigo": "19453",
+            "precio": 74156,
+            "stock": 35
+        }
+    ],
+    "GPU": [
+        {
+            "nombre": "NVIDIA RTX 3070",
+            "codigo": "3070",
+            "precio": 350000,
+            "stock": 1
+        }
+    ]
+}

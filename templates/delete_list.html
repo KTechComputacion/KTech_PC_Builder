@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Eliminar componentes</h1>
+<p>Listado de todos los componentes. Tocá la ❌ para eliminar. Se actualizará el stock.json.</p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="table-wrap">
+  <table class="summary-table">
+    <thead>
+      <tr>
+        <th>Categoría</th>
+        <th>Nombre</th>
+        <th>Código</th>
+        <th class="right">Precio</th>
+        <th class="right">Stock</th>
+        <th class="right">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for row in items %}
+      <tr>
+        <td>{{ row.categoria }}</td>
+        <td>{{ row.nombre }}</td>
+        <td>{{ row.codigo }}</td>
+        <td class="right">{{ row.precio|money }}</td>
+        <td class="right">
+          <span class="{{ row.stock|stock_class }}">{{ row.stock }}</span>
+        </td>
+        <td class="right">
+          <form method="post"
+                action="{{ url_for('delete_item') }}"
+                onsubmit="return confirm('¿Eliminar este componente?\n\n{{ row.categoria }}\n{{ row.nombre }}\nCódigo: {{ row.codigo }}');">
+            <input type="hidden" name="categoria" value="{{ row.categoria }}">
+            <input type="hidden" name="codigo" value="{{ row.codigo }}">
+            <button class="btn btn-danger btn-ghost" type="submit" title="Eliminar">❌</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<div class="wizard-nav">
+  <a class="btn btn-secondary" href="{{ url_for('index') }}">← Volver al inicio</a>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+config.py
+
+# === Python / Flask ===
+
+__pycache__/
+
+*.pyc
+
+*.pyo
+
+*.pyd
+
+*.log
+
+# === Entornos ===
+
+.venv/
+
+venv/
+
+env/
+
+# === IDE ===
+
+.vscode/
+
+# === Binarios / drivers locales ===
+
+bin/
+
+chromedriver*
+
+geckodriver*
+
+# === Secretos / config local ===
+
+.env
+
+*.env
+
+# Python
+# Virtualenv
+# VS Code
+# Local binarios/driver
+# Secretos

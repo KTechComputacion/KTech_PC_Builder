@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Ingreso manual de componente</h1>
+<p>Completá los campos para agregar o actualizar un componente en el stock.</p>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="flash-container">
+      {% for category, msg in messages %}
+        <div class="flash {{ category }}">{{ msg }}</div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<form class="form" method="post" action="{{ url_for('manual') }}">
+  <div class="field">
+    <label for="categoria">Categoría</label>
+    <select id="categoria" name="categoria" required>
+      {% for cat in suggested_categories %}
+        <option value="{{ cat }}">{{ cat }}</option>
+      {% endfor %}
+    </select>
+  </div>
+
+  <div class="field">
+    <label for="nombre">Nombre</label>
+    <input id="nombre" name="nombre" type="text" placeholder="Ej: GPU NVIDIA RTX 4060 8GB" required autofocus>
+  </div>
+
+  <div class="field">
+    <label for="codigo">Código (número)</label>
+    <input id="codigo" name="codigo" type="text" inputmode="numeric" pattern="[0-9]+" placeholder="Ej: 21001" required>
+  </div>
+
+  <div class="field">
+    <label for="precio">Precio</label>
+    <input id="precio" name="precio" type="number" step="1" min="0" placeholder="Ej: 350000" required>
+  </div>
+
+  <div class="field">
+    <label for="stock">Stock</label>
+    <input id="stock" name="stock" type="number" step="1" min="0" placeholder="Ej: 5" required>
+  </div>
+
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">Guardar</button>
+    <a class="btn btn-secondary" href="{{ url_for('index') }}">Volver al inicio</a>
+  </div>
+</form>
+{% endblock %}

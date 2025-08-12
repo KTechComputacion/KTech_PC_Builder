@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="step-header">
+  <div>
+    <h1>Elegí {{ category }}</h1>
+    <p>Mostrando de menor a mayor precio. Hacé clic en un ítem para continuar.</p>
+  </div>
+</div>
+
+<div class="cards">
+  {% for item in items %}
+    <div class="card card-multi">
+      <!-- Botón principal: elige (y avanza) -->
+      <form method="post" action="{{ url_for('select_category', category=category) }}">
+        <button type="submit" class="card-button" title="Elegir {{ item.nombre }}">
+          <div class="card-title">{{ item.nombre }}</div>
+          <div class="card-meta">
+            <span class="price">{{ item.precio|money }}</span>
+            <span class="{{ item.stock|stock_class }}">{{ item.stock }} en stock</span>
+          </div>
+        </button>
+        <input type="hidden" name="codigo" value="{{ item.codigo }}">
+        <input type="hidden" name="nombre" value="{{ item.nombre }}">
+        <input type="hidden" name="precio" value="{{ item.precio }}">
+      </form>
+
+      {% if category in ["RAM","SSD"] %}
+      <!-- Botón +: agrega otro igual SIN avanzar -->
+      <form method="post" action="{{ url_for('select_category', category=category) }}">
+        <input type="hidden" name="codigo" value="{{ item.codigo }}">
+        <input type="hidden" name="nombre" value="{{ item.nombre }}">
+        <input type="hidden" name="precio" value="{{ item.precio }}">
+        <input type="hidden" name="add" value="1">
+        <button type="submit" class="add-btn" title="Agregar otro (no avanza)">+</button>
+      </form>
+      {% endif %}
+    </div>
+  {% endfor %}
+</div>
+
+<div class="wizard-nav">
+  {% if prev_cat %}
+    <a class="btn btn-secondary" href="{{ url_for('go_back', category=category) }}">← Atrás</a>
+  {% endif %}
+
+  {% if next_cat %}
+    <!-- Botón para SALTAR esta categoría sin seleccionar -->
+    <form method="post" action="{{ url_for('select_category', category=category) }}" style="display:inline;">
+      <input type="hidden" name="skip" value="1">
+      <button class="btn btn-secondary" type="submit">Siguiente → (sin {{ category|lower }})</button>
+    </form>
+    <span class="hint">Después: {{ next_cat }}</span>
+  {% else %}
+    <a class="btn btn-primary" href="{{ url_for('final') }}">Ir al final →</a>
+  {% endif %}
+</div>
+{% endblock %}

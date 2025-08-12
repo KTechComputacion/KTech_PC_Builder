@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <title>KTech PC Builder</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="{{ url_for('static', filename='css/styles.css') }}" rel="stylesheet">
+</head>
+<body>
+<header class="app-header">
+  <div class="brand">KTech PC Builder</div>
+  <nav class="nav-actions">
+    <a class="btn btn-secondary" href="{{ url_for('reset') }}">Inicio</a>
+  </nav>
+</header>
+
+<main class="layout">
+  <section class="content">
+    {% block content %}{% endblock %}
+  </section>
+
+  <aside class="sidebar">
+    <h3>Selección actual</h3>
+        <ul class="picked-list">
+  {% for cat in categories %}
+    {% set _build = build|default({}) %}
+    {% set val = _build.get(cat) %}
+    <li>
+      <strong>{{ cat }}:</strong>
+      {% if val %}
+        {% if val is mapping %}
+          <span class="mini-names">{{ val['nombre'] }}</span>
+          <span class="price">{{ val['precio']|money }}</span>
+        {% elif val is sequence and (val is not string) %}
+          {# Lista (RAM / SSD) — mostrar cada producto y xN si hay repetidos #}
+          {% set lines = val | compact_lines %}
+          <span class="mini-names">
+            {% for row in lines %}
+              {{ row.nombre }}{% if row.cantidad > 1 %} x{{ row.cantidad }}{% endif %}{% if not loop.last %}, {% endif %}
+            {% endfor %}
+          </span>
+          {% set cat_total = lines | map(attribute='total') | sum %}
+          <span class="price">{{ cat_total | money }}</span>
+        {% else %}
+          <em>Sin seleccionar</em>
+        {% endif %}
+      {% else %}
+        <em>Sin seleccionar</em>
+      {% endif %}
+    </li>
+  {% endfor %}
+        </ul>
+<div class="subtotal">
+  <span>Subtotal:</span>
+  <strong class="price big">{{ (subtotal|default(0))|money }}</strong>
+</div>
+    <div class="subtotal">
+      <span>Subtotal:</span>
+      <strong class="price big">{{ (subtotal|default(0))|money }}</strong>
+    </div>
+  </aside>
+</main>
+
+<footer class="app-footer">
+  <small>© {{ 2025 }} KTech — Demo local</small>
+</footer>
+</body>
+</html>

@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="welcome">
+  <h1>Bienvenido a KTech PC Builder</h1>
+  <p>Elegí una opción para comenzar.</p>
+  <div class="home-actions">
+    <a class="btn btn-primary" href="{{ url_for('start') }}">ARMAR PRESUPUESTO</a>
+    <a class="btn btn-secondary" href="{{ url_for('manual') }}">INGRESO MANUAL</a>
+    <a class="btn btn-danger" href="{{ url_for('delete_items') }}">Eliminar</a>
+  </div>
+</div>
+{% endblock %}

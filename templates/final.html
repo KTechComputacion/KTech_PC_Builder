@@ -1,0 +1,183 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Paso final: ganancia y financiación</h1>
+
+<div class="form" style="max-width:720px;">
+  <form method="post" action="{{ url_for('final') }}">
+    <div class="field">
+      <label for="ganancia">GANANCIA (ARS)</label>
+      <input id="ganancia" name="ganancia" type="number" step="1" min="0" value="{{ profit }}" placeholder="Ej: 100000">
+    </div>
+    <div class="form-actions">
+      <a class="btn btn-primary" href="{{ url_for('place_order_route') }}">Realizar pedido</a>
+      <button class="btn btn-primary" type="submit">Aplicar ganancia</button>
+      <a class="btn btn-secondary" href="{{ url_for('select_category', category='MOTHER') }}">← Atrás</a>
+      <a class="btn btn-secondary" href="{{ url_for('reset') }}">Inicio</a>
+    </div>
+  </form>
+</div>
+
+<h2>Resumen</h2>
+<table class="summary-table">
+  <thead>
+    <tr>
+      <th>Categoría</th>
+      <th>Producto</th>
+      <th class="right">Precio</th>
+    </tr>
+  </thead>
+<tbody>
+  {% for cat in categories %}
+    {% set val = build.get(cat) %}
+    <tr>
+      <td>{{ cat }}</td>
+      <td>
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['nombre'] }}
+          {% elif val is sequence and (val is not string) %}
+            {% if val|length == 1 %}
+              {{ val[0]['nombre'] }}
+            {% else %}
+              {{ val|length }} ítems
+            {% endif %}
+          {% else %}
+            <em>Sin seleccionar</em>
+          {% endif %}
+        {% else %}
+          <em>Sin seleccionar</em>
+        {% endif %}
+      </td>
+      <td class="right">
+        {% if val %}
+          {% if val is mapping %}
+            {{ val['precio']|money }}
+          {% elif val is sequence and (val is not string) %}
+            {% set precios = val | map(attribute='precio') | list %}
+            {{ (precios | sum) | money }}
+          {% else %}
+            -
+          {% endif %}
+        {% else %}
+          -
+        {% endif %}
+      </td>
+    </tr>
+  {% endfor %}
+
+  <div class="form" style="max-width:720px;">
+  <form method="post" action="{{ url_for('final') }}">
+    <div class="field">
+      <label for="venta">PRECIO DE VENTA (opcional)</label>
+      <input id="venta" name="venta" type="number" step="1" min="0"
+             value="{{ '' if venta is none else venta }}"
+             placeholder="Ej: 700000">
+      <small class="hint">
+        Si completás este campo, se usará como total contado y la ganancia será
+        <code>venta - subtotal</code>. Si lo dejás vacío, podés usar el campo Ganancia de abajo.
+      </small>
+    </div>
+
+    <div class="field">
+      <label for="ganancia">GANANCIA (ARS)</label>
+      <input id="ganancia" name="ganancia" type="number" step="1" min="0"
+             value="{{ profit if venta is none else (venta - subtotal) }}"
+             placeholder="Ej: 100000">
+    </div>
+
+    <div class="form-actions">
+      <a class="btn btn-primary" href="{{ url_for('place_order_route') }}">Realizar pedido</a>
+      <button class="btn btn-primary" type="submit">Aplicar</button>
+      <a class="btn btn-secondary" href="{{ url_for('select_category', category='MOTHER') }}">← Atrás</a>
+      <a class="btn btn-secondary" href="{{ url_for('reset') }}">Inicio</a>
+    </div>
+  </form>
+</div>
+
+
+</tbody>
+
+  <tfoot>
+    <tr>
+      <td colspan="2" class="right">Subtotal (costo)</td>
+      <td class="right"><strong class="price">{{ subtotal|money }}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="right">Ganancia</td>
+      <td class="right"><strong class="price">{{ profit|money }}</strong></td>
+    </tr>
+    <tr>
+      <td colspan="2" class="right"><strong>Total contado</strong></td>
+      <td class="right"><strong class="price">{{ contado|money }}</strong></td>
+    </tr>
+  </tfoot>
+</table>
+
+<h2 style="margin-top:16px;">Financiación</h2>
+<div class="cards">
+  <div class="card">
+    <div class="card-button" style="cursor:default;">
+      <div class="card-title">6 cuotas (coef. 1.32117)</div>
+      <div class="card-meta">
+        <span>Total: <strong class="price">{{ total_6|money }}</strong></span>
+        <span>Cuota: <strong class="price">
+          {% if cuota_6 is number %}
+            {{ cuota_6|int|money }}
+          {% else %}
+            {{ cuota_6|money }}
+          {% endif %}
+        </strong></span>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-button" style="cursor:default;">
+      <div class="card-title">12 cuotas (coef. 1.65)</div>
+      <div class="card-meta">
+        <span>Total: <strong class="price">{{ total_12|money }}</strong></span>
+        <span>Cuota: <strong class="price">
+          {% if cuota_12 is number %}
+            {{ cuota_12|int|money }}
+          {% else %}
+            {{ cuota_12|money }}
+          {% endif %}
+        </strong></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 style="margin-top:16px;">Texto para enviar al cliente</h2>
+<div class="form" style="max-width:920px;">
+  <div class="field">
+    <label for="mktext">Mensaje</label>
+    <textarea id="mktext" rows="16" style="width:100%; background:#0f1218; border:1px solid var(--border); border-radius:10px; padding:12px; color:var(--text);">{{ marketing_text }}</textarea>
+  </div>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="button" id="copyBtn">Copiar texto</button>
+  </div>
+</div>
+
+<script>
+  (function(){
+    const btn = document.getElementById('copyBtn');
+    const ta  = document.getElementById('mktext');
+    if(btn && ta){
+      btn.addEventListener('click', async () => {
+        try{
+          ta.select();
+          ta.setSelectionRange(0, 99999);
+          await navigator.clipboard.writeText(ta.value);
+          btn.textContent = '¡Copiado!';
+          setTimeout(() => btn.textContent = 'Copiar texto', 1500);
+        }catch(e){
+          document.execCommand('copy');
+          btn.textContent = '¡Copiado!';
+          setTimeout(() => btn.textContent = 'Copiar texto', 1500);
+        }
+      });
+    }
+  })();
+</script>
+{% endblock %}
+
