@@ -2,6 +2,48 @@ from flask import Flask, render_template, session, redirect, url_for, request, f
 import json
 import os
 from tecnoprices_order import place_order
+from marketing import build_marketing_text
+
+DATA_FILE = "stock.json"  # tu archivo real
+
+def actualizar_item(categoria, codigo_original, nombre, codigo, precio, stock):
+    with open("stock.json", "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    if categoria in data:
+        for item in data[categoria]:
+            if str(item["codigo"]) == str(codigo_original):
+                item["nombre"] = nombre
+                item["codigo"] = codigo
+                if precio is not None:
+                    item["precio"] = precio
+                if stock is not None:
+                    item["stock"] = stock
+                break
+
+    with open("stock.json", "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)    # Cargar datos existentes
+    if not os.path.exists(DATA_FILE):
+        return False
+
+    with open(DATA_FILE, "r", encoding="utf-8") as f:
+        data = json.load(f)
+
+    # Buscar y actualizar
+    if categoria in data:
+        for item in data[categoria]:
+            if str(item["codigo"]) == str(codigo_original):
+                item["nombre"] = nombre
+                item["codigo"] = codigo
+                item["precio"] = precio
+                item["stock"] = stock
+                break
+
+    # Guardar cambios
+    with open(DATA_FILE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2, ensure_ascii=False)
+
+    return True
 
 # Coeficientes de financiación
 COEF_6 = 1.32117
@@ -13,70 +55,6 @@ def ars(n):
         return f"${int(round(n)):,}".replace(",", ".")
     except Exception:
         return str(n)
-
-# --- Descripciones cortas por CPU ---
-def describe_cpu(cpu_name: str) -> str:
-    n = (cpu_name or "").lower()
-    if "4600g" in n:
-        return "Con el Ryzen 5 4600G vas a poder disfrutar juegos como Fortnite, Valorant, LoL o CS2 en buena calidad sin placa de video dedicada, además de estudiar, trabajar y crear contenido básico."
-    if "5600g" in n or "5600gt" in n:
-        return "El Ryzen 5 5600G ofrece un excelente balance: gaming eSports fluido sin GPU dedicada y rendimiento sólido para estudio y trabajo."
-    if "5700g" in n:
-        return "El Ryzen 7 5700G brinda potencia extra para multitarea, edición liviana y juegos eSports con gráficos integrados."
-    if "8700g" in n:
-        return "El Ryzen 7 8700G incorpora gráficos integrados muy capaces (RDNA3), ideal para eSports y creadores que recién empiezan."
-    if any(x in n for x in ["9600x", "5700x", "5800xt", "5900x", "9700x", "9900x", "9950x", "9800x3d", "9950x3d"]):
-        return "Procesador ideal para gaming exigente con placa de video dedicada, edición y streaming con excelente rendimiento multicore."
-    return "Equipo equilibrado para jugar títulos populares, estudiar, trabajar y crear sin complicaciones."
-
-def describe_mother(mother_name: str) -> str:
-    n = (mother_name or "").lower()
-    if "a520" in n:
-        return "Mother con chipset A520: plataforma confiable para uso diario y gaming eSports, con posibilidad de upgrades moderados."
-    if "b450" in n:
-        return "Mother B450: excelente relación precio/rendimiento, permite upgrades a Ryzen de mayor gama."
-    if "b550" in n:
-        return "Mother B550: preparada para upgrades, buen soporte de memorias y almacenamiento NVMe."
-    return "Mother estable y compatible, lista para futuras actualizaciones."
-
-# --- Generador del texto de venta ---
-def build_marketing_text(build, contado, total_6, cuota_6, total_12, cuota_12) -> str:
-    cpu = build.get("CPU", {})
-    mb  = build.get("MOTHER", {})
-    cpu_name = cpu.get("nombre", "Procesador a confirmar") if isinstance(cpu, dict) else "Procesador a confirmar"
-    mb_name  = mb.get("nombre", "Motherboard a confirmar") if isinstance(mb, dict) else "Motherboard a confirmar"
-    cpu_line = f"🧠 Procesador: {cpu_name}. "
-    cpu_desc = describe_cpu(cpu_name)
-    mb_line  = f"🧩 Motherboard: {mb_name}. "
-    mb_desc  = describe_mother(mb_name)
-    text = f"""🎮 ¡PC lista para jugar, estudiar y trabajar! 🎮
-🚀 Rendimiento equilibrado y preparada para crecer.
-
-Mirá sus componentes:
-
-• {cpu_line}{cpu_desc}
-• {mb_line}{mb_desc}
-
-Además, te la entregamos con:
-• 🛠️ Armado profesional
-• 🪟 Windows 10/11 activado
-• 📦 Paquete Office
-• 📶 Adaptador WiFi
-• 🚚 Envío e instalación a domicilio en Mar del Plata
-
-🛡️ ¡6 MESES DE GARANTÍA TOTAL! 🛡️
-
-💰 PRECIOS:
-• 💵 Contado/Transferencia: {ars(contado)}
-• 💳 6 cuotas fijas: total {ars(total_6)} → {ars(cuota_6)} c/u
-• 💳 12 cuotas fijas: total {ars(total_12)} → {ars(cuota_12)} c/u
-
-📍 Podés retirarla y probarla en nuestro local.
-🏠 En MDP te la llevamos, la instalamos ¡y recién ahí la pagás!
-
-Recomendada para adolescentes y adultos que buscan una PC versátil para juegos populares, clases online, ofimática y creación básica de contenido.
-"""
-    return text
 
 app = Flask(__name__)
 app.secret_key = "cambia_esto_por_un_secreto_seguro"
@@ -231,6 +209,29 @@ def manual():
         )
         return redirect(url_for("manual"))
     return render_template("manual.html", suggested_categories=suggested_categories)
+
+@app.route("/update_item", methods=["POST"])
+def update_item():
+    categoria = request.form.get("categoria")
+    codigo_original = request.form.get("original_codigo")
+    nombre = request.form.get("nombre")
+    codigo = request.form.get("codigo")
+
+    # Procesar precio: limpiar símbolos y convertir a entero
+    precio_str = (request.form.get("precio", "") or "").strip()
+    precio_str = precio_str.replace("$", "").replace(".", "").replace(",", "").strip()
+    precio = int(precio_str) if precio_str.isdigit() else None
+
+    # Procesar stock: limpiar separadores y convertir a entero
+    stock_str = (request.form.get("stock", "") or "").strip()
+    stock_str = stock_str.replace(",", "").strip()
+    stock = int(stock_str) if stock_str.isdigit() else None
+
+    # Actualizar el item en el archivo JSON
+    actualizar_item(categoria, codigo_original, nombre, codigo, precio, stock)
+
+    flash("Componente actualizado correctamente.", "success")
+    return redirect(url_for("delete_items"))
 
 @app.route("/place-order")
 def place_order_route():

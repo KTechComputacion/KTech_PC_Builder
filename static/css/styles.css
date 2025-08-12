@@ -152,6 +152,33 @@ textarea{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "L
     font-weight: bold;
 }
 
+/* === Delete/Edit table enhancements === */
+.resizable-table { table-layout: fixed; }
+.resizable-table th, .resizable-table td { overflow: hidden; }
+.resizable-table .cell-input { position: relative; }
+.fit-input { width: 100%; max-width: 100%; background:#0f1218; border:1px solid var(--border); border-radius:8px; padding:8px; color:var(--text); }
+.name-input { font-weight: 600; }
+.code-input { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+.num-input { text-align: right; }
+
+.row-actions { display:flex; align-items:center; justify-content:flex-end; gap:8px; }
+
+/* Edit state highlight */
+tr.editing { background: rgba(78,161,255,0.08); }
+tr.editing .fit-input { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(78,161,255,0.15) inset; }
+
+/* Column resizer handle */
+.col-resizer { display:inline-block; width:10px; height:18px; margin-left:6px; cursor: col-resize; opacity:.35; }
+th:hover .col-resizer { opacity:.7; }
+body.resizing { cursor: col-resize; }
+
+/* Make table easier to scroll horizontally if needed */
+.table-wrap { width:100%; overflow:auto; }
+
+/* Tooltip for truncated values */
+.cell-input input[title] { text-overflow: ellipsis; white-space: nowrap; overflow: hidden; }
+.cell-input input:focus { white-space: normal; overflow: visible; }
+
 
 
 

@@ -1,48 +1,68 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Eliminar componentes</h1>
-<p>Listado de todos los componentes. Tocá la ❌ para eliminar. Se actualizará el stock.json.</p>
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="flash-container">
-      {% for category, msg in messages %}
-        <div class="flash {{ category }}">{{ msg }}</div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
+<h1>Eliminar - Editar componentes</h1>
 
 <div class="table-wrap">
-  <table class="summary-table">
+  <table class="summary-table resizable-table" id="editTable">
+    <colgroup>
+      <col style="width:150px">
+      <col style="width:420px">
+      <col style="width:140px">
+      <col style="width:120px">
+      <col style="width:110px">
+      <col style="width:170px">
+    </colgroup>
     <thead>
       <tr>
-        <th>Categoría</th>
-        <th>Nombre</th>
-        <th>Código</th>
-        <th class="right">Precio</th>
-        <th class="right">Stock</th>
-        <th class="right">Acciones</th>
+        <th data-col="0">Categoría <span class="col-resizer" draggable="true"></span></th>
+        <th data-col="1">Nombre <span class="col-resizer" draggable="true"></span></th>
+        <th data-col="2">Código <span class="col-resizer" draggable="true"></span></th>
+        <th class="right" data-col="3">Precio <span class="col-resizer" draggable="true"></span></th>
+        <th class="right" data-col="4">Stock <span class="col-resizer" draggable="true"></span></th>
+        <th class="right" data-col="5">Acciones <span class="col-resizer" draggable="true"></span></th>
       </tr>
     </thead>
     <tbody>
       {% for row in items %}
       <tr>
+        <!-- Form flotante para editar esta fila -->
+        <form id="edit-{{ loop.index }}" class="row-edit-form" method="post" action="{{ url_for('update_item') }}"></form>
+
         <td>{{ row.categoria }}</td>
-        <td>{{ row.nombre }}</td>
-        <td>{{ row.codigo }}</td>
-        <td class="right">{{ row.precio|money }}</td>
-        <td class="right">
-          <span class="{{ row.stock|stock_class }}">{{ row.stock }}</span>
+
+        <td class="cell-input">
+          <input form="edit-{{ loop.index }}" class="fit-input name-input" type="text" name="nombre" value="{{ row.nombre }}" title="{{ row.nombre }}" readonly>
+          <input form="edit-{{ loop.index }}" type="hidden" name="categoria" value="{{ row.categoria }}">
+          <input form="edit-{{ loop.index }}" type="hidden" name="original_codigo" value="{{ row.codigo }}">
         </td>
+
+        <td class="cell-input">
+          <input form="edit-{{ loop.index }}" class="fit-input code-input" type="text" name="codigo" value="{{ row.codigo }}" title="{{ row.codigo }}" readonly>
+        </td>
+
+        <td class="right cell-input">
+          <input form="edit-{{ loop.index }}" class="fit-input num-input" type="number" name="precio" value="{{ row.precio }}" readonly>
+        </td>
+
+        <td class="right cell-input">
+          <input form="edit-{{ loop.index }}" class="fit-input num-input" type="number" name="stock" value="{{ row.stock }}" readonly>
+        </td>
+
         <td class="right">
-          <form method="post"
-                action="{{ url_for('delete_item') }}"
-                onsubmit="return confirm('¿Eliminar este componente?\n\n{{ row.categoria }}\n{{ row.nombre }}\nCódigo: {{ row.codigo }}');">
-            <input type="hidden" name="categoria" value="{{ row.categoria }}">
-            <input type="hidden" name="codigo" value="{{ row.codigo }}">
-            <button class="btn btn-danger btn-ghost" type="submit" title="Eliminar">❌</button>
-          </form>
+          <div class="row-actions">
+            <!-- Eliminar: propio form -->
+            <form method="post"
+                  action="{{ url_for('delete_item') }}"
+                  onsubmit="return confirm('¿Eliminar este componente?\\n\\n{{ row.categoria }}\\n{{ row.nombre }}\\nCódigo: {{ row.codigo }}');">
+              <input type="hidden" name="categoria" value="{{ row.categoria }}">
+              <input type="hidden" name="codigo" value="{{ row.codigo }}">
+              <button class="btn btn-danger btn-ghost" type="submit" title="Eliminar">❌</button>
+            </form>
+
+            <!-- Editar / Guardar (apunta al form de la fila) -->
+            <button type="button" class="btn btn-warning btn-ghost" title="Editar" onclick="enableEdit(this)">✏️</button>
+            <button form="edit-{{ loop.index }}" type="submit" class="btn btn-success btn-ghost save-btn" style="display:none;">💾</button>
+          </div>
         </td>
       </tr>
       {% endfor %}
@@ -50,7 +70,52 @@
   </table>
 </div>
 
-<div class="wizard-nav">
-  <a class="btn btn-secondary" href="{{ url_for('index') }}">← Volver al inicio</a>
-</div>
+<script>
+  function enableEdit(btn){
+    const row = btn.closest('tr');
+    row.classList.add('editing');
+    row.querySelectorAll('.cell-input input').forEach(inp => inp.removeAttribute('readonly'));
+    const saveBtn = row.querySelector('.save-btn');
+    if(saveBtn) saveBtn.style.display = 'inline-block';
+  }
+
+  // Column resize logic
+  (function(){
+    const table = document.getElementById('editTable');
+    if(!table) return;
+    const colgroup = table.querySelector('colgroup');
+    if(!colgroup) return;
+
+    let startX = 0;
+    let startWidth = 0;
+    let activeCol = null;
+
+    table.querySelectorAll('th .col-resizer').forEach(handle => {
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        const th = e.target.closest('th');
+        activeCol = parseInt(th.getAttribute('data-col'), 10);
+        startX = e.pageX;
+        const colEl = colgroup.children[activeCol];
+        startWidth = colEl.offsetWidth;
+        document.body.classList.add('resizing');
+        document.addEventListener('mousemove', onMove);
+        document.addEventListener('mouseup', onUp);
+      });
+    });
+
+    function onMove(e){
+      if(activeCol === null) return;
+      const dx = e.pageX - startX;
+      const newW = Math.max(80, startWidth + dx);
+      colgroup.children[activeCol].style.width = newW + 'px';
+    }
+    function onUp(){
+      document.body.classList.remove('resizing');
+      document.removeEventListener('mousemove', onMove);
+      document.removeEventListener('mouseup', onUp);
+      activeCol = null;
+    }
+  })();
+</script>
 {% endblock %}
